@@ -483,20 +483,28 @@ def pct(decimal: float, digits: int = 2) -> str:
 
 
 def format_x_post(row: Opportunity) -> str:
-    lines = [
-        f"{row.asset} funding spread",
-        f"Long {row.long.venue.upper()} {pct(row.long.hourly, 4)}/h ({row.long.interval_hours:g}h settle)",
-        f"Short {row.short.venue.upper()} {pct(row.short.hourly, 4)}/h ({row.short.interval_hours:g}h settle)",
-        f"Spread APR if this holds: {pct(row.spread_apr, 1)}",
-    ]
+    long_venue = "Kraken" if row.long.venue == "kraken" else row.long.venue.upper()
+    short_venue = "Kraken" if row.short.venue == "kraken" else row.short.venue.upper()
+
+    body = (
+        f"Watching the {row.asset} funding spread between {long_venue} and {short_venue} right now.\n\n"
+        f"Long {long_venue} at {pct(row.long.hourly, 4)}/h ({row.long.interval_hours:g}h settle) vs "
+        f"Short {short_venue} at {pct(row.short.hourly, 4)}/h ({row.short.interval_hours:g}h settle). "
+        f"If this rate holds, annualized APR sits at {pct(row.spread_apr, 1)}"
+    )
+
     if row.payback_days is not None:
-        lines.append(f"Fee payback ~{row.payback_days:.1f} days (4 taker fills)")
+        body += f" with roughly {row.payback_days:.1f} days to clear 4 taker fills"
+    body += "."
+
     if row.basis_bps is not None:
-        lines.append(f"Mark basis {row.basis_bps:+.1f} bps (long vs short)")
+        body += f" Mark basis is {row.basis_bps:+.1f} bps."
+
     if row.unstable:
-        lines.append("Next Kraken hour may flip this spread.")
-    lines.append("Not advice. Snapshot only.")
-    return "\n".join(lines)
+        body += " Next Kraken hour may flip this spread."
+
+    body += "\n\nJust a live snapshot of what I am tracking, not financial advice."
+    return body
 
 
 def main() -> None:
