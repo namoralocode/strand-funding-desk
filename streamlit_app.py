@@ -154,7 +154,7 @@ venues = "OKX · Kraken" + (" · Bybit" if use_bybit else "")
 st.markdown(
     f"""
 <div class="desk-hero">
-  <div class="desk-kicker">EEA desk · public funding snapshot</div>
+  <div class="desk-kicker">EEA desk · personal funding desk</div>
   <h1 style="margin:0 0 6px 0; font-size:1.7rem;">Strand Funding Desk</h1>
   <div style="color:#9fb0c2; font-size:0.92rem;">{venues} · scanned {scanned_at}</div>
 </div>
